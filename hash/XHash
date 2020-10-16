@@ -1,0 +1,41 @@
+//https://www.bilibili.com/video/BV1db411q7B8?t=1094&p=40
+
+class XHash
+{
+public:
+	std::size_t operator()(const P & c) const
+	{
+		return hash_val(c.m_id, c.m_isSb, c.m_name);//自定义obj的data member
+	}
+
+	template <typename... Types>
+	size_t hash_val(const Types&... args)const
+	{
+		size_t seed = 0;
+		hash_value(seed, args...);
+		return seed;
+	}
+
+	template <typename T, typename... Types>
+	void hash_value(size_t& seed,
+		const T& firstArg,
+		const Types&... args) const
+	{
+		hash_combine(seed, firstArg);
+		hash_value(seed, args...);
+	}
+
+	template <typename T>
+	void hash_value(size_t& seed,
+		const T& val) const
+	{
+		hash_combine(seed, val);
+	}
+
+	template<typename T>
+	void hash_combine(size_t& seed,
+		const T& val) const
+	{
+		seed ^= std::hash<T>()(val) + 0x9e3779b9 + (seed << 6) + (seed >> 2);
+	}
+};
